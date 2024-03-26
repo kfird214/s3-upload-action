@@ -107,7 +107,7 @@ async function run(input) {
     Bucket: input.awsBucket,
     Key: fileKey,
     ContentType: input.contentType,
-    Body: fs.readFileSync(input.filePath),
+    Body: fs.createReadStream(input.filePath),
     ACL: acl,
   };
   await s3.putObject(params).promise();
