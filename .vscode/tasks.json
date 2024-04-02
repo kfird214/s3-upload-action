@@ -9,7 +9,6 @@
             "group": "build",
             "problemMatcher": [
                 "$tsc",
-                "$nvcc",
                 "$eslint-compact"
             ],
         }
