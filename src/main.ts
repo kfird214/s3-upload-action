@@ -1,6 +1,6 @@
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import core from '@actions/core';
 import { GetObjectCommand, ObjectCannedACL, S3 } from '@aws-sdk/client-s3';
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
