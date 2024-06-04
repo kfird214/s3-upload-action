@@ -1,18 +1,18 @@
 {
   "name": "s3-upload-action",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "This is a GitHub Action that uploads a file to Amazon S3",
   "main": "src/main.js",
-  "author": "Hiroyuki Kusu <kusu0806@gmail.com>",
+  "author": "Kfir Nisan Darshani <kfird214@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hkusu/s3-upload-action.git"
+    "url": "git+https://github.com/kfird214/s3-upload-action.git"
   },
   "bugs": {
-    "url": "https://github.com/hkusu/s3-upload-action/issues"
+    "url": "https://github.com/kfird214/s3-upload-action/issues"
   },
-  "homepage": "https://github.com/hkusu/s3-upload-action#readme",
+  "homepage": "https://github.com/kfird214/s3-upload-action#readme",
   "scripts": {
     "local": "NODE_ENV=local node src/main.ts",
     "package": "ncc build src/main.ts -o dist --source-map --license licenses.txt"
