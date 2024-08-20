@@ -122,12 +122,37 @@ async function run(input: GithubInput) {
 
     let acl: ObjectCannedACL = input.public == 'true' ? 'public-read' : 'private';
 
-    await s3.putObject({
+    let fileStream = fs.createReadStream(input.filePath, { highWaterMark: 5 * 1024 * 1024 }); // 5MB chunk size
+
+    const createMultipartUpload = await s3.createMultipartUpload({
         Bucket: input.awsBucket,
         Key: fileKey,
-        ContentType: input.contentType,
-        Body: fs.createReadStream(input.filePath),
         ACL: acl,
+        ContentType: input.contentType,
+    });
+    const uploadId = createMultipartUpload.UploadId;
+
+    let partNumber = 1;
+    let parts = [];
+
+    for await (const chunk of fileStream) {
+        const uploadPart = await s3.uploadPart({
+            Bucket: input.awsBucket,
+            Key: fileKey,
+            PartNumber: partNumber,
+            UploadId: uploadId,
+            Body: chunk,
+        });
+
+        parts.push({ ETag: uploadPart.ETag, PartNumber: partNumber });
+        partNumber++;
+    }
+
+    await s3.completeMultipartUpload({
+        Bucket: input.awsBucket,
+        Key: fileKey,
+        UploadId: uploadId,
+        MultipartUpload: { Parts: parts },
     });
 
     let fileUrl;
@@ -172,7 +197,7 @@ async function run(input: GithubInput) {
             ACL: 'public-read', // always public
         });
         fs.unlinkSync(tmpQrFile);
-        
+
         let qrUrl = `https://${input.awsBucket}.s3.${input.awsRegion}.amazonaws.com/${qrKey}`;
         if (input.alternativeDomainPublic) {
             qrUrl = qrUrl.replace(`${input.awsBucket}.s3.${input.awsRegion}.amazonaws.com/${bucketRoot}`, `${input.alternativeDomainPublic}/`);
